@@ -1,10 +1,11 @@
 import AbstractDatabase, {Settings} from '../lib/AbstractDatabase';
 import { getDatabase, set, ref, get, child,remove } from "firebase/database";
-
+import { initializeApp } from "firebase/app";
 
 export default class RealtimeDB extends AbstractDatabase {
   public _data: any;
   private database: any;
+  private app: any;
 
   constructor(settings:Settings) {
     super(settings);
@@ -13,7 +14,7 @@ export default class RealtimeDB extends AbstractDatabase {
     settings.cache = 0;
     settings.writeInterval = 0;
     this._data = null;
-    this.database = getDatabase();
+    this.app = this.initFirebase();
   }
 
   get isAsync() { return true; }
@@ -40,5 +41,19 @@ export default class RealtimeDB extends AbstractDatabase {
 
   async set(key:string, value:string) {
     return set(ref(this.database, `${this.settings.table ?? 'pads'}/${key}`), value);
+  }
+
+  async initFirebase() {
+    this.app = initializeApp({
+      apiKey: this.settings.clientOptions.apiKey,
+      authDomain: this.settings.clientOptions.authDomain,
+      databaseURL: this.settings.clientOptions.databaseURL,
+      projectId: this.settings.clientOptions.projectId,
+      storageBucket: this.settings.clientOptions.storageBucket,
+      messagingSenderId: this.settings.clientOptions.messagingSenderId,
+      appId: this.settings.clientOptions.appId,
+      measurementId: this.settings.clientOptions.measurementId
+    });
+    this.database = getDatabase(this.app);
   }
 };
