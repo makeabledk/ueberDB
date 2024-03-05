@@ -48,7 +48,7 @@ export default class RealtimeDB extends AbstractDatabase {
   }
 
   async set(key:string, value:string) {
-    console.log('set', key, value);
+    console.log('set', key, JSON.stringify(value));
     await this.initFirebase();
     await admin.database().ref(`${this.settings.table}/${key.replace(/[\.]/g,':')}`).set(value);
   }
