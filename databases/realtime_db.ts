@@ -23,9 +23,11 @@ export default class RealtimeDB extends AbstractDatabase {
     this._data = null;
   }
 
-  findKeys(key:string, notKey:string) {
+  async findKeys(key:string, notKey:string) {
+    const docRef = await get(child(ref(this.database), `${this.settings.table ?? 'pads'}`));
+    const keys = docRef.val();
     const regex = this.createFindRegex(key, notKey);
-    return [...this._data.keys()].filter((k) => regex.test(k));
+    return Object.keys(keys).filter((k) => regex.test(k));
   }
 
   async get(key:string) {
