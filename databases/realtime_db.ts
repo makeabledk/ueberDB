@@ -26,6 +26,15 @@ export default class RealtimeDB extends AbstractDatabase {
   async findKeys(key:string, notKey:string) {
 
     await this.initFirebase();
+    this.app.database().ref('padsTable').once('value').then((snapshot:any) => {
+      if (snapshot.exists()) {
+          console.log(snapshot.val(),'here');
+      } else {
+          console.log("No data available");
+      }
+    }).catch((error:any) => {
+        console.error(error);
+    });
     const tmp = child(firebaseRef(getRealtimeDatabase()), `padsTable`);
     firebaseGet(tmp).then((snapshot) => {
         if (snapshot.exists()) {
