@@ -26,8 +26,10 @@ export default class RealtimeDB extends AbstractDatabase {
   async findKeys(key:string, notKey:string) {
     await this.initFirebase();
     console.log('findKeys', key, notKey);
-    const docRef = await get(child(ref(this.database), `${this.settings.table ?? 'pads'}`));
-    const keys = docRef.val();
+    const docRef = child(ref(getDatabase()), `${this.settings.table ?? 'pads'}`);
+    console.log('docRef', docRef);
+    const values = await get(docRef);
+    const keys = values.val();
     const regex = this.createFindRegex(key, notKey);
     console.log('findKeys', regex, keys, Object.keys(keys).filter((k) => regex.test(k)));
     return Object.keys(keys).filter((k) => regex.test(k));
@@ -36,7 +38,7 @@ export default class RealtimeDB extends AbstractDatabase {
   async get(key:string) {
     await this.initFirebase();
     console.log('get', key);
-    const result = await get(child(ref(this.database), `${this.settings.table ?? 'pads'}/${key}`));
+    const result = await get(child(ref(getDatabase()), `${this.settings.table ?? 'pads'}/${key}`));
     console.log('get', result.val());
     return result.val();
   }
@@ -46,7 +48,7 @@ export default class RealtimeDB extends AbstractDatabase {
   async remove(key:string) {
     await this.initFirebase();
     console.log('remove', key);
-    await remove(ref(this.database, `${this.settings.table ?? 'pads'}/${key}`));
+    await remove(ref(getDatabase(), `${this.settings.table ?? 'pads'}/${key}`));
     console.log('remove', true);
     return true;
   }
@@ -54,7 +56,7 @@ export default class RealtimeDB extends AbstractDatabase {
   async set(key:string, value:string) {
     await this.initFirebase();
     console.log('set', key, value);
-    await set(ref(this.database, `${this.settings.table ?? 'pads'}/${key}`), value);
+    await set(ref(getDatabase(), `${this.settings.table ?? 'pads'}/${key}`), value);
     console.log('set', true);
   }
 
@@ -72,8 +74,6 @@ export default class RealtimeDB extends AbstractDatabase {
         measurementId: this.settings.clientOptions.measurementId
       });
       console.log('initFirebase done');
-      this.database = getDatabase(this.app);
-      console.log('initFirebase database done');
     }
   }
 };
