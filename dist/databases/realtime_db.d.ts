@@ -6,7 +6,7 @@ export default class RealtimeDB extends AbstractDatabase {
     constructor(settings: Settings);
     get isAsync(): boolean;
     close(): void;
-    findKeys(key: string, notKey: string): Promise<string[]>;
+    findKeys(key: string, notKey: string): Promise<never[]>;
     get(key: string): Promise<any>;
     init(): void;
     remove(key: string): Promise<boolean>;
