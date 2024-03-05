@@ -59,7 +59,7 @@ export default class RealtimeDB extends AbstractDatabase {
   }
 
   async initFirebase() {
-    if (this.database === null) {
+    if (!this.database) {
       console.log('initFirebase', this.settings.clientOptions);
       this.app = initializeApp({
         apiKey: this.settings.clientOptions.apiKey,
