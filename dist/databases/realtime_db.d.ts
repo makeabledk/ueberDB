@@ -9,7 +9,7 @@ export default class RealtimeDB extends AbstractDatabase {
     findKeys(key: string, notKey: string): Promise<string[]>;
     get(key: string): Promise<any>;
     init(): void;
-    remove(key: string): Promise<void>;
+    remove(key: string): Promise<boolean>;
     set(key: string, value: string): Promise<void>;
     initFirebase(): Promise<void>;
 }

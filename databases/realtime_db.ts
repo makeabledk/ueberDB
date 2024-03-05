@@ -24,25 +24,34 @@ export default class RealtimeDB extends AbstractDatabase {
   }
 
   async findKeys(key:string, notKey:string) {
+    console.log('findKeys', key, notKey);
     const docRef = await get(child(ref(this.database), `${this.settings.table ?? 'pads'}`));
     const keys = docRef.val();
     const regex = this.createFindRegex(key, notKey);
+    console.log('findKeys', regex, keys, Object.keys(keys).filter((k) => regex.test(k)));
     return Object.keys(keys).filter((k) => regex.test(k));
   }
 
   async get(key:string) {
+    console.log('get', key);
     const result = await get(child(ref(this.database), `${this.settings.table ?? 'pads'}/${key}`));
+    console.log('get', result.val());
     return result.val();
   }
 
   init() {}
 
   async remove(key:string) {
-    return remove(ref(this.database, `${this.settings.table ?? 'pads'}/${key}`));
+    console.log('remove', key);
+    await remove(ref(this.database, `${this.settings.table ?? 'pads'}/${key}`));
+    console.log('remove', true);
+    return true;
   }
 
   async set(key:string, value:string) {
-    return set(ref(this.database, `${this.settings.table ?? 'pads'}/${key}`), value);
+    console.log('set', key, value);
+    await set(ref(this.database, `${this.settings.table ?? 'pads'}/${key}`), value);
+    console.log('set', true);
   }
 
   async initFirebase() {
