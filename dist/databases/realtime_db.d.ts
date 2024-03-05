@@ -1,8 +1,8 @@
 import AbstractDatabase, { Settings } from '../lib/AbstractDatabase';
 export default class RealtimeDB extends AbstractDatabase {
     _data: any;
-    private database;
     private app;
+    private firebaseInitialized;
     constructor(settings: Settings);
     get isAsync(): boolean;
     close(): void;

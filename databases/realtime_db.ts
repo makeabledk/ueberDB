@@ -4,8 +4,8 @@ import { initializeApp, setLogLevel } from "firebase/app";
 
 export default class RealtimeDB extends AbstractDatabase {
   public _data: any;
-  private database: any;
   private app: any;
+  private firebaseInitialized = false;
 
   constructor(settings:Settings) {
     super(settings);
@@ -24,7 +24,6 @@ export default class RealtimeDB extends AbstractDatabase {
   }
 
   async findKeys(key:string, notKey:string) {
-
     await this.initFirebase();
     const tmp = child(firebaseRef(getRealtimeDatabase()), `padsTable`);
     firebaseGet(tmp).then((snapshot) => {
@@ -81,9 +80,10 @@ export default class RealtimeDB extends AbstractDatabase {
   }
 
   async initFirebase() {
-    if (!this.app) {
+    if (!this.firebaseInitialized) {
       console.log('initFirebase', this.settings.clientOptions);
       setLogLevel('debug');
+      this.firebaseInitialized = true;
       const app = initializeApp({
         apiKey: this.settings.clientOptions.apiKey,
         authDomain: this.settings.clientOptions.authDomain,
