@@ -29,7 +29,7 @@ export default class RealtimeDB extends AbstractDatabase {
       const ret = await db.ref(`${this.settings.table}`).once("value")
       const keys = ret.val();
       const regex = this.createFindRegex(key, notKey);
-      return Object.keys(keys).filter((k) => regex.test(k));
+      return Object.keys(keys ?? {}).filter((k) => regex.test(k));
   }
 
   async get(key:string) {
