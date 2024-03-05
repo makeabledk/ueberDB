@@ -55,6 +55,7 @@ export default class RealtimeDB extends AbstractDatabase {
   }
 
   async initFirebase() {
+    console.log('initFirebase', this.settings.clientOptions);
     this.app = initializeApp({
       apiKey: this.settings.clientOptions.apiKey,
       authDomain: this.settings.clientOptions.authDomain,
@@ -65,6 +66,8 @@ export default class RealtimeDB extends AbstractDatabase {
       appId: this.settings.clientOptions.appId,
       measurementId: this.settings.clientOptions.measurementId
     });
+    console.log('initFirebase done');
     this.database = getDatabase(this.app);
+    console.log('initFirebase database done');
   }
 };
