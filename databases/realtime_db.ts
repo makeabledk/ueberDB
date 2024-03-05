@@ -1,6 +1,6 @@
 import AbstractDatabase, {Settings} from '../lib/AbstractDatabase';
 import { getDatabase, set, ref, get, child,remove } from "firebase/database";
-import { initializeApp } from "firebase/app";
+import { initializeApp, setLogLevel } from "firebase/app";
 
 export default class RealtimeDB extends AbstractDatabase {
   public _data: any;
@@ -68,6 +68,7 @@ export default class RealtimeDB extends AbstractDatabase {
   async initFirebase() {
     if (!this.app) {
       console.log('initFirebase', this.settings.clientOptions);
+      setLogLevel('debug');
       this.app = initializeApp({
         apiKey: this.settings.clientOptions.apiKey,
         authDomain: this.settings.clientOptions.authDomain,
