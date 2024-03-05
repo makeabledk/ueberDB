@@ -24,15 +24,20 @@ export default class RealtimeDB extends AbstractDatabase {
   }
 
   async findKeys(key:string, notKey:string) {
-    await this.initFirebase();
-    console.log('findKeys', key, notKey);
-    const docRef = child(ref(getDatabase()), `${this.settings.table ?? 'pads'}`);
-    console.log('docRef', docRef);
-    const values = await get(docRef);
-    const keys = values.val();
-    const regex = this.createFindRegex(key, notKey);
-    console.log('findKeys', regex, keys, Object.keys(keys).filter((k) => regex.test(k)));
-    return Object.keys(keys).filter((k) => regex.test(k));
+    try{
+      await this.initFirebase();
+      console.log('findKeys', key, notKey);
+      const docRef = child(ref(getDatabase()), `${this.settings.table ?? 'pads'}`);
+      console.log('docRef', docRef);
+      const values = await get(docRef);
+      const keys = values.val();
+      const regex = this.createFindRegex(key, notKey);
+      console.log('findKeys', regex, keys, Object.keys(keys).filter((k) => regex.test(k)));
+      return Object.keys(keys).filter((k) => regex.test(k));
+    }catch(e){
+      console.log('findKeys', e);
+    }
+    return [];
   }
 
   async get(key:string) {
@@ -61,7 +66,7 @@ export default class RealtimeDB extends AbstractDatabase {
   }
 
   async initFirebase() {
-    if (!this.database) {
+    if (!this.app) {
       console.log('initFirebase', this.settings.clientOptions);
       this.app = initializeApp({
         apiKey: this.settings.clientOptions.apiKey,
