@@ -9,6 +9,7 @@ export default class RealtimeDB extends AbstractDatabase {
   constructor(settings:Settings) {
     super(settings);
     this.settings = settings;
+    this.settings.table = settings.table ?? 'pads';
     settings.json = false;
     settings.cache = 0;
     settings.writeInterval = 0;
@@ -25,9 +26,7 @@ export default class RealtimeDB extends AbstractDatabase {
   async findKeys(key:string, notKey:string) {
       await this.initFirebase();
       const db = admin.database()
-      console.log('findKeys', key, notKey);
-      const ret = await db.ref(`${this.settings.table ?? 'pads'}`).once("value")
-      console.log('findKeys', ret.val());
+      const ret = await db.ref(`${this.settings.table}`).once("value")
       const keys = ret.val();
       const regex = this.createFindRegex(key, notKey);
       return Object.keys(keys).filter((k) => regex.test(k));
@@ -35,9 +34,7 @@ export default class RealtimeDB extends AbstractDatabase {
 
   async get(key:string) {
     await this.initFirebase();
-    console.log('get', key);
-    const result = await admin.database().ref(`${this.settings.table ?? 'pads'}/${key}`).once("value");
-    console.log('get', result.val());
+    const result = await admin.database().ref(`${this.settings.table}/${key}`).once("value");
     return result.val();
   }
 
@@ -45,25 +42,18 @@ export default class RealtimeDB extends AbstractDatabase {
 
   async remove(key:string) {
     await this.initFirebase();
-    console.log('remove', key);
-    await admin.database().ref(`${this.settings.table ?? 'pads'}/${key}`).remove();
-    console.log('remove', true);
-    return true;
+    await admin.database().ref(`${this.settings.table}/${key}`).remove();
   }
 
   async set(key:string, value:string) {
     await this.initFirebase();
-    console.log('set', key, value);
-    await admin.database().ref(`${this.settings.table ?? 'pads'}/${key}`).set(value);
-    console.log('set', true);
+    await admin.database().ref(`${this.settings.table}/${key}`).set(value);
   }
 
   async initFirebase() {
     if (!this.firebaseInitialized) {
-      console.log('initFirebase', this.settings.clientOptions);
       this.firebaseInitialized = true;
-      const app = admin.initializeApp(this.settings.clientOptions);
-      console.log('initFirebase done');
+      this.app = admin.initializeApp(this.settings.clientOptions);
     }
   }
 };
