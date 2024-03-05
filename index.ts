@@ -37,6 +37,7 @@ import RedisDB from './databases/redis_db'
 import Rethink_db from './databases/rethink_db'
 import SQLiteDB from './databases/sqlite_db'
 import SurrealDB from './databases/surrealdb_db'
+import RealtimeDB from './databases/realtime_db'
 
 type CBDBType = {
   [key: string]:Function
@@ -144,6 +145,8 @@ export class Database {
             return new Couch_db(this.dbSettings);
         case 'surrealdb':
             return new SurrealDB(this.dbSettings);
+        case 'realtime':
+            return new RealtimeDB(this.dbSettings);
         default:
             throw new Error('Invalid database type');
     }

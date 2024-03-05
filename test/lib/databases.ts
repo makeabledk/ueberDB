@@ -82,5 +82,16 @@ export const databases:DatabaseType = {
     speeds: {
         findKeysMax: 30,
     },
+  },
+  realtime: {
+    url: 'mongodb://127.0.0.1:27017',
+    database: 'mydb_test',
+    speeds: {
+      count: 2000,
+      findKeysMax: 5,
+      setMax: 10,
+      getMax: 10,
+      removeMax: 10,
+    }
   }
 };

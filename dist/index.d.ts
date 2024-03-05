@@ -14,6 +14,7 @@ import RedisDB from './databases/redis_db';
 import Rethink_db from './databases/rethink_db';
 import SQLiteDB from './databases/sqlite_db';
 import SurrealDB from './databases/surrealdb_db';
+import RealtimeDB from './databases/realtime_db';
 export declare class Database {
     readonly type: any;
     readonly dbSettings: any;
@@ -35,7 +36,7 @@ export declare class Database {
      * @param callback - Deprecated. Node-style callback. If null, a Promise is returned.
      */
     init(callback?: null): Promise<any>;
-    initDB(): Mysql_db | Postgres_db | SQLiteDB | Mongodb_db | RedisDB | Cassandra_db | Dirty_db | Dirty_git_db | Elasticsearch_db | MemoryDB | Mock_db | MSSQL | Rethink_db | Couch_db | SurrealDB;
+    initDB(): Mysql_db | Postgres_db | SQLiteDB | Mongodb_db | RedisDB | Cassandra_db | Dirty_db | Dirty_git_db | Elasticsearch_db | MemoryDB | Mock_db | MSSQL | Rethink_db | Couch_db | SurrealDB | RealtimeDB;
     /**
      * Wrapper functions
      */
