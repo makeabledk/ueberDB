@@ -14,7 +14,7 @@ export default class RealtimeDB extends AbstractDatabase {
     settings.cache = 0;
     settings.writeInterval = 0;
     this._data = null;
-    this.app = this.initFirebase();
+    this.app = null;
   }
 
   get isAsync() { return true; }
@@ -24,6 +24,7 @@ export default class RealtimeDB extends AbstractDatabase {
   }
 
   async findKeys(key:string, notKey:string) {
+    await this.initFirebase();
     console.log('findKeys', key, notKey);
     const docRef = await get(child(ref(this.database), `${this.settings.table ?? 'pads'}`));
     const keys = docRef.val();
@@ -33,6 +34,7 @@ export default class RealtimeDB extends AbstractDatabase {
   }
 
   async get(key:string) {
+    await this.initFirebase();
     console.log('get', key);
     const result = await get(child(ref(this.database), `${this.settings.table ?? 'pads'}/${key}`));
     console.log('get', result.val());
@@ -42,6 +44,7 @@ export default class RealtimeDB extends AbstractDatabase {
   init() {}
 
   async remove(key:string) {
+    await this.initFirebase();
     console.log('remove', key);
     await remove(ref(this.database, `${this.settings.table ?? 'pads'}/${key}`));
     console.log('remove', true);
@@ -49,25 +52,28 @@ export default class RealtimeDB extends AbstractDatabase {
   }
 
   async set(key:string, value:string) {
+    await this.initFirebase();
     console.log('set', key, value);
     await set(ref(this.database, `${this.settings.table ?? 'pads'}/${key}`), value);
     console.log('set', true);
   }
 
   async initFirebase() {
-    console.log('initFirebase', this.settings.clientOptions);
-    this.app = initializeApp({
-      apiKey: this.settings.clientOptions.apiKey,
-      authDomain: this.settings.clientOptions.authDomain,
-      databaseURL: this.settings.clientOptions.databaseURL,
-      projectId: this.settings.clientOptions.projectId,
-      storageBucket: this.settings.clientOptions.storageBucket,
-      messagingSenderId: this.settings.clientOptions.messagingSenderId,
-      appId: this.settings.clientOptions.appId,
-      measurementId: this.settings.clientOptions.measurementId
-    });
-    console.log('initFirebase done');
-    this.database = getDatabase(this.app);
-    console.log('initFirebase database done');
+    if (this.database === null) {
+      console.log('initFirebase', this.settings.clientOptions);
+      this.app = initializeApp({
+        apiKey: this.settings.clientOptions.apiKey,
+        authDomain: this.settings.clientOptions.authDomain,
+        databaseURL: this.settings.clientOptions.databaseURL,
+        projectId: this.settings.clientOptions.projectId,
+        storageBucket: this.settings.clientOptions.storageBucket,
+        messagingSenderId: this.settings.clientOptions.messagingSenderId,
+        appId: this.settings.clientOptions.appId,
+        measurementId: this.settings.clientOptions.measurementId
+      });
+      console.log('initFirebase done');
+      this.database = getDatabase(this.app);
+      console.log('initFirebase database done');
+    }
   }
 };
