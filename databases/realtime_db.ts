@@ -33,6 +33,7 @@ export default class RealtimeDB extends AbstractDatabase {
   }
 
   async get(key:string) {
+    console.log('get', key);
     await this.initFirebase();
     const result = await admin.database().ref(`${this.settings.table}/${key.replace(/[\.]/g,':')}`).once("value");
     return result.val();
@@ -41,11 +42,13 @@ export default class RealtimeDB extends AbstractDatabase {
   init() {}
 
   async remove(key:string) {
+    console.log('remove', key);
     await this.initFirebase();
     await admin.database().ref(`${this.settings.table}/${key.replace(/[\.]/g,':')}`).remove();
   }
 
   async set(key:string, value:string) {
+    console.log('set', key, value);
     await this.initFirebase();
     await admin.database().ref(`${this.settings.table}/${key.replace(/[\.]/g,':')}`).set(value);
   }
