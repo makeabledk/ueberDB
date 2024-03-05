@@ -33,24 +33,28 @@ export default class RealtimeDB extends AbstractDatabase {
   }
 
   async get(key:string) {
-    console.log('get', key);
     await this.initFirebase();
-    const result = await admin.database().ref(`${this.settings.table}/${key.replace(/[\.]/g,':')}`).once("value");
-    return result.val();
+    const result = await admin.database().ref(`${this.settings.table}/${key.replace(/[\.]/g,'::')}`).once("value");
+    let value = result.val();
+    if(value?.meta?.pool?.attribubToNum){
+      value.meta.pool.attribubToNum = Object.fromEntries(Object.entries(value.meta.pool.attribubToNum).map(([k,v])=>[k.replace(/::/g,'.'),v]) as any)
+    }
+    return value;
   }
 
   init() {}
 
   async remove(key:string) {
-    console.log('remove', key);
     await this.initFirebase();
-    await admin.database().ref(`${this.settings.table}/${key.replace(/[\.]/g,':')}`).remove();
+    await admin.database().ref(`${this.settings.table}/${key.replace(/[\.]/g,'::')}`).remove();
   }
 
-  async set(key:string, value:string) {
-    console.log('set', key, JSON.stringify(value));
+  async set(key:string, value:any) {
+    if(value?.meta?.pool?.attribubToNum){
+      value.meta.pool.attribubToNum = Object.fromEntries(Object.entries(value.meta.pool.attribubToNum).map(([k,v])=>[k.replace(/[\.]/g,'::'),v]) as any)
+    }
     await this.initFirebase();
-    await admin.database().ref(`${this.settings.table}/${key.replace(/[\.]/g,':')}`).set(value);
+    await admin.database().ref(`${this.settings.table}/${key.replace(/[\.]/g,'::')}`).set(value);
   }
 
   async initFirebase() {

@@ -10,7 +10,7 @@ export default class RealtimeDB extends AbstractDatabase {
     get(key: string): Promise<any>;
     init(): void;
     remove(key: string): Promise<void>;
-    set(key: string, value: string): Promise<void>;
+    set(key: string, value: any): Promise<void>;
     initFirebase(): Promise<void>;
 }
 //# sourceMappingURL=realtime_db.d.ts.map
