@@ -44,6 +44,7 @@ export default class RealtimeDB extends AbstractDatabase {
       
       console.log('docRef', docRef);
       const values = await firebaseGet(docRef);
+      console.log('values', values.val());
       const keys = values.val();
       const regex = this.createFindRegex(key, notKey);
       console.log('findKeys', regex, keys, Object.keys(keys).filter((k) => regex.test(k)));
