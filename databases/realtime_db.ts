@@ -1,6 +1,6 @@
 import AbstractDatabase, {Settings} from '../lib/AbstractDatabase';
 import admin from "firebase-admin";
-var serviceAccount = require("./keys/firebase.json");
+var serviceAccount = require(process.env.FIREBASE_SERVICE_ACCOUNT_KEY || "./serviceAccountKey.json");
 
 export default class RealtimeDB extends AbstractDatabase {
   public _data: any;
