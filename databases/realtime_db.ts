@@ -1,5 +1,6 @@
 import AbstractDatabase, {Settings} from '../lib/AbstractDatabase';
 import admin from "firebase-admin";
+var serviceAccount = require("/keys/firebase.json");
 
 export default class RealtimeDB extends AbstractDatabase {
   public _data: any;
@@ -60,7 +61,10 @@ export default class RealtimeDB extends AbstractDatabase {
   async initFirebase() {
     if (!this.firebaseInitialized) {
       this.firebaseInitialized = true;
-      this.app = admin.initializeApp(this.settings.clientOptions);
+      this.app = admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+        databaseURL: "https://ma-notepad-default-rtdb.europe-west1.firebasedatabase.app"
+      });
     }
   }
 };
