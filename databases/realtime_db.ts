@@ -35,7 +35,7 @@ export default class RealtimeDB extends AbstractDatabase {
 
   async get(key:string) {
     await this.initFirebase();
-    const result = await admin.database().ref(`${this.settings.table}/${key.replace(/[\.]/g,'::')}`).once("value");
+    const result = await admin.database().ref(`${this.settings.table}/${key.replace(/[\.]/g,'::').replace(/[\$]/g, ';;')}`).once("value");
     let value = result.val();
     return this.mapRealtimeKeysToKeys(value);
   }
@@ -44,12 +44,12 @@ export default class RealtimeDB extends AbstractDatabase {
 
   async remove(key:string) {
     await this.initFirebase();
-    await admin.database().ref(`${this.settings.table}/${key.replace(/[\.]/g,'::')}`).remove();
+    await admin.database().ref(`${this.settings.table}/${key.replace(/[\.]/g,'::').replace(/[\$]/g, ';;')}`).remove();
   }
 
   async set(key:string, value:any) {
     await this.initFirebase();
-    await admin.database().ref(`${this.settings.table}/${key.replace(/[\.]/g,'::')}`).set(this.mapKeysToRealtimeKeys(value));
+    await admin.database().ref(`${this.settings.table}/${key.replace(/[\.]/g,'::').replace(/[\$]/g, ';;')}`).set(this.mapKeysToRealtimeKeys(value));
   }
 
   async initFirebase() {
@@ -62,13 +62,13 @@ export default class RealtimeDB extends AbstractDatabase {
     }
   }
 
-  mapKeysToRealtimeKeys(keys:any): any {
-    if (typeof keys === 'string' || Array.isArray(keys) || keys === null || keys === undefined || typeof keys === "boolean")  return keys;
-    return Object.fromEntries(Object.entries(keys).map(([k,v]) => [k.replace(/[\.]/g,'::'), this.mapKeysToRealtimeKeys(v)]));
+  mapKeysToRealtimeKeys(values:any): any {
+    if (typeof values === 'string' || Array.isArray(values) || values === null || values === undefined || typeof values === "boolean")  return values;
+    return Object.fromEntries(Object.entries(values).map(([k,v]) => [k.replace(/[\.]/g,'::').replace(/[\$]/g, ';;'), this.mapKeysToRealtimeKeys(v)]));
   }
 
-  mapRealtimeKeysToKeys(keys:any): any {
-    if (typeof keys === 'string' || Array.isArray(keys) || keys === null || keys === undefined || typeof keys === "boolean") return keys;
-    return Object.fromEntries((Object.entries(keys).map(([k,v]) => [k.replace(/::/g,'.'), this.mapRealtimeKeysToKeys(v)])));
+  mapRealtimeKeysToKeys(values:any): any {
+    if (typeof values === 'string' || Array.isArray(values) || values === null || values === undefined || typeof values === "boolean") return values;
+    return Object.fromEntries((Object.entries(values).map(([k,v]) => [k.replace(/::/g,'.').replace(/;;/g, '$'), this.mapRealtimeKeysToKeys(v)])));
   }
 };
