@@ -63,12 +63,12 @@ export default class RealtimeDB extends AbstractDatabase {
   }
 
   mapKeysToRealtimeKeys(keys:any): any {
-    if (typeof keys === 'string' || Array.isArray(keys)) return keys;
+    if (typeof keys === 'string' || Array.isArray(keys) || keys === null || keys === undefined || typeof keys === "boolean")  return keys;
     return Object.fromEntries(Object.entries(keys).map(([k,v]) => [k.replace(/[\.]/g,'::'), this.mapKeysToRealtimeKeys(v)]));
   }
 
   mapRealtimeKeysToKeys(keys:any): any {
-    if (typeof keys === 'string' || Array.isArray(keys)) return keys;
+    if (typeof keys === 'string' || Array.isArray(keys) || keys === null || keys === undefined || typeof keys === "boolean") return keys;
     return Object.fromEntries((Object.entries(keys).map(([k,v]) => [k.replace(/::/g,'.'), this.mapRealtimeKeysToKeys(v)])));
   }
 };
