@@ -37,10 +37,7 @@ export default class RealtimeDB extends AbstractDatabase {
     await this.initFirebase();
     const result = await admin.database().ref(`${this.settings.table}/${key.replace(/[\.]/g,'::')}`).once("value");
     let value = result.val();
-    if(value?.meta?.pool?.attribToNum){
-      value.meta.pool.attribToNum = Object.fromEntries(Object.entries(value.meta.pool.attribToNum).map(([k,v])=>[k.replace(/::/g,'.'),v]) as any)
-    }
-    return value;
+    return this.mapRealtimeKeysToKeys(value);
   }
 
   init() {}
@@ -51,11 +48,8 @@ export default class RealtimeDB extends AbstractDatabase {
   }
 
   async set(key:string, value:any) {
-    if(value?.meta?.pool?.attribToNum){
-      value.meta.pool.attribToNum = Object.fromEntries(Object.entries(value.meta.pool.attribToNum).map(([k,v])=>[k.replace(/[\.]/g,'::'),v]) as any)
-    }
     await this.initFirebase();
-    await admin.database().ref(`${this.settings.table}/${key.replace(/[\.]/g,'::')}`).set(value);
+    await admin.database().ref(`${this.settings.table}/${key.replace(/[\.]/g,'::')}`).set(this.mapKeysToRealtimeKeys(value));
   }
 
   async initFirebase() {
@@ -66,5 +60,15 @@ export default class RealtimeDB extends AbstractDatabase {
         databaseURL: "https://ma-notepad-default-rtdb.europe-west1.firebasedatabase.app"
       });
     }
+  }
+
+  mapKeysToRealtimeKeys(keys:any): any {
+    if (typeof keys === 'string' || Array.isArray(keys)) return keys;
+    return Object.fromEntries(Object.entries(keys).map(([k,v]) => [k.replace(/[\.]/g,'::'), this.mapKeysToRealtimeKeys(v)]));
+  }
+
+  mapRealtimeKeysToKeys(keys:any): any {
+    if (typeof keys === 'string' || Array.isArray(keys)) return keys;
+    return Object.fromEntries((Object.entries(keys).map(([k,v]) => [k.replace(/::/g,'.'), this.mapRealtimeKeysToKeys(v)])));
   }
 };
